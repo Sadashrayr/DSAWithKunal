@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCT AI Assistant</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Backend Status Indicator -->
+        <div class="backend-status disconnected" id="backendStatus">
+            Backend: Not Connected
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <div class="sidebar-title">OCT AI Assistant</div>
+            </div>
+            
+            <button class="new-analysis-btn" onclick="checkAuthAndShowUpload()">
+                <i class="fas fa-plus"></i>
+                New Analysis
+            </button>
+            
+            <div class="recent-analyses">
+                <div class="recent-title">Recent Analyses</div>
+                <!-- Recent analyses would be listed here -->
+            </div>
+            
+            <div class="user-info" id="userInfo" style="display: none;">
+                <div class="user-avatar" id="userAvatar">JD</div>
+                <div class="user-details">
+                    <h4 id="userName">Dr. John Doe</h4>
+                    <p id="userType">Cardiologist</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="chat-header">
+                <h1 class="chat-title">Retinal OCT Analysis Assistant</h1>
+                <div class="auth-actions" id="authActions">
+                    <button class="auth-button login-btn" onclick="window.location.href='login.html'">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Login
+                    </button>
+                    <button class="auth-button register-btn" onclick="window.location.href='register.html'">
+                        <i class="fas fa-user-plus"></i>
+                        Register
+                    </button>
+                </div>
+                <div class="ai-status" id="loggedInStatus" style="display: none;">
+                    <div class="status-dot"></div>
+                    AI Ready
+                    <button class="logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="welcome-message">
+                    <div class="message-header">
+                        <div class="bot-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                    </div>
+                    <h2 class="welcome-title">Welcome to OCT AI Assistant</h2>
+                    <p class="welcome-text" id="welcomeText">I'm here to help you analyze retinal OCT images and provide detailed insights. You can:</p>
+                    
+                    <ul class="capabilities-list">
+                        <li>
+                            <div class="capability-bullet"></div>
+                            Upload OCT images for automated analysis
+                        </li>
+                        <li>
+                            <div class="capability-bullet"></div>
+                            Ask questions about retinal conditions
+                        </li>
+                        <li>
+                            <div class="capability-bullet"></div>
+                            Get clinical recommendations and insights
+                        </li>
+                        <li>
+                            <div class="capability-bullet"></div>
+                            Discuss findings and treatment options
+                        </li>
+                    </ul>
+                    
+                    <p class="cta-text" id="ctaText">Please login or register to get started!</p>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <div class="input-wrapper">
+                    <input 
+                        type="text" 
+                        class="chat-input" 
+                        placeholder="Please login to start chatting..."
+                        id="messageInput"
+                        onkeypress="handleKeyPress(event)"
+                        disabled
+                    >
+                    <div class="input-actions">
+                        <button class="input-btn" onclick="checkAuthAndShowUpload()" disabled id="uploadBtn">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        <button class="input-btn send-btn" id="sendBtn" onclick="sendMessage()" disabled>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div class="upload-overlay" id="uploadOverlay">
+        <div class="upload-modal">
+            <h3>Upload OCT Image</h3>
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <p>Click to upload or drag and drop your OCT scan</p>
+                <p style="font-size: 12px; color: #a0aec0; margin-top: 0.5rem;">Supports: JPG, PNG, DICOM</p>
+            </div>
+            <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleFileUpload(event)">
+            <button onclick="hideUploadModal()" style="background: #4a5568; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; margin-top: 1rem; cursor: pointer;">Cancel</button>
+        </div>
+    </div>
+
+    <script src="scripts.js"></script>
+    <script>
+        function checkAuthAndShowUpload() {
+            const userData = localStorage.getItem('userData');
+            if (!userData) {
+                alert('Please login or register to upload OCT images');
+                window.location.href = 'register.html';
+                return;
+            }
+            showUploadModal();
+        }
+
+        function logout() {
+            localStorage.removeItem('userData');
+            localStorage.removeItem('authToken');
+            location.reload();
+        }
+
+        // Check authentication status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const userData = localStorage.getItem('userData');
+            
+            if (userData) {
+                const user = JSON.parse(userData);
+                
+                // Show user info and hide auth buttons
+                document.getElementById('userInfo').style.display = 'block';
+                document.getElementById('authActions').style.display = 'none';
+                document.getElementById('loggedInStatus').style.display = 'flex';
+                
+                // Update user display
+                document.getElementById('userName').textContent = user.fullName;
+                document.getElementById('userType').textContent = user.userType;
+                
+                // Update avatar with initials
+                const initials = user.fullName.split(' ').map(name => name.charAt(0)).join('').substring(0, 2);
+                document.getElementById('userAvatar').textContent = initials;
+                
+                // Enable chat input and buttons
+                document.getElementById('messageInput').disabled = false;
+                document.getElementById('messageInput').placeholder = 'Ask about OCT analysis, upload an image, or describe symptoms...';
+                document.getElementById('sendBtn').disabled = false;
+                document.getElementById('uploadBtn').disabled = false;
+                
+                // Update welcome text
+                document.getElementById('welcomeText').textContent = `Welcome back, ${user.fullName}! I'm here to help you analyze retinal OCT images and provide detailed insights. You can:`;
+                document.getElementById('ctaText').textContent = 'Upload an OCT image or ask me anything to get started!';
+            } else {
+                // Show auth buttons and hide user info
+                document.getElementById('userInfo').style.display = 'none';
+                document.getElementById('authActions').style.display = 'flex';
+                document.getElementById('loggedInStatus').style.display = 'none';
+                
+                // Keep chat input disabled
+                document.getElementById('messageInput').disabled = true;
+                document.getElementById('sendBtn').disabled = true;
+                document.getElementById('uploadBtn').disabled = true;
+            }
+        });
+    </script>
+</body>
+</html>

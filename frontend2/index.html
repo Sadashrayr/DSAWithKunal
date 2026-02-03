@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCT AI Assistant</title>
+    <link rel="stylesheet" href="src/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Login Modal -->
+    <div class="auth-modal" id="loginModal" style="display: none;">
+        <div class="auth-modal-content">
+            <div class="auth-modal-header">
+                <h2>Welcome Back</h2>
+                <button class="close-auth-modal" id="closeLoginModal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="auth-modal-body">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email Address</label>
+                        <input type="email" id="loginEmail" required placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" required placeholder="Enter your password">
+                    </div>
+                    <button type="submit" class="auth-btn primary" id="loginBtn">
+                        <span class="btn-text">Sign In</span>
+                        <div class="btn-spinner" style="display: none;"></div>
+                    </button>
+                </form>
+                <div class="auth-divider">
+                    <span>Don't have an account?</span>
+                </div>
+                <button class="auth-btn secondary" id="switchToRegister">Create Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="auth-modal" id="registerModal" style="display: none;">
+        <div class="auth-modal-content">
+            <div class="auth-modal-header">
+                <h2>Join OCT AI Assistant</h2>
+                <button class="close-auth-modal" id="closeRegisterModal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="auth-modal-body">
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="registerName">Full Name</label>
+                        <input type="text" id="registerName" required placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email Address</label>
+                        <input type="email" id="registerEmail" required placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerSpecialty">Specialty</label>
+                        <select id="registerSpecialty" required>
+                            <option value="">Select your specialty</option>
+                            <option value="Ophthalmologist">Ophthalmologist</option>
+                            <option value="Retinal Specialist">Retinal Specialist</option>
+                            <option value="Researcher">Researcher</option>
+                            <option value="Medical Student">Medical Student</option>
+                            <option value="Patient">Patient</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Password</label>
+                        <input type="password" id="registerPassword" required placeholder="Create a password">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" required placeholder="Confirm your password">
+                    </div>
+                    <button type="submit" class="auth-btn primary" id="registerBtn">
+                        <span class="btn-text">Create Account</span>
+                        <div class="btn-spinner" style="display: none;"></div>
+                    </button>
+                </form>
+                <div class="auth-divider">
+                    <span>Already have an account?</span>
+                </div>
+                <button class="auth-btn secondary" id="switchToLogin">Sign In</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                    </svg>
+                    <span class="logo-text">OCT AI Assistant</span>
+                </div>
+                <button class="new-chat-btn" id="newChatBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14m-7-7h14"/>
+                    </svg>
+                    <span class="btn-text">New Analysis</span>
+                </button>
+            </div>
+            
+            <div class="chat-history" id="chatHistory">
+                <div class="history-section">
+                    <h3>Recent Analyses</h3>
+                    <div class="history-list" id="historyList">
+                        <!-- Chat history items will be populated here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile" id="userProfile">
+                    <div class="user-avatar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <div class="user-info">
+                        <div class="user-name" id="userName">Guest User</div>
+                        <div class="user-type" id="userType">Not logged in</div>
+                    </div>
+                    <button class="logout-btn" id="logoutBtn" style="display: none;" title="Logout">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16,17 21,12 16,7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="main-content">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <button class="sidebar-toggle" id="sidebarToggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="6" x2="21" y2="6"/>
+                            <line x1="3" y1="12" x2="21" y2="12"/>
+                            <line x1="3" y1="18" x2="21" y2="18"/>
+                        </svg>
+                    </button>
+                    <h1>Retinal OCT Analysis Assistant</h1>
+                    <div class="header-actions">
+                        <div class="auth-buttons" id="authButtons">
+                            <button class="header-btn login-btn" id="loginHeaderBtn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                                    <polyline points="10,17 15,12 10,7"/>
+                                    <line x1="15" y1="12" x2="3" y2="12"/>
+                                </svg>
+                                Login
+                            </button>
+                            <button class="header-btn register-btn" id="registerHeaderBtn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="8.5" cy="7" r="4"/>
+                                    <line x1="20" y1="8" x2="20" y2="14"/>
+                                    <line x1="23" y1="11" x2="17" y2="11"/>
+                                </svg>
+                                Register
+                            </button>
+                        </div>
+                        <div class="user-menu" id="userMenu" style="display: none;">
+                            <div class="user-menu-info">
+                                <div class="user-menu-avatar">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="12" cy="7" r="4"/>
+                                    </svg>
+                                </div>
+                                <div class="user-menu-details">
+                                    <div class="user-menu-name" id="userMenuName">Dr. Smith</div>
+                                    <div class="user-menu-type" id="userMenuType">Ophthalmologist</div>
+                                </div>
+                            </div>
+                            <button class="user-menu-logout" id="userMenuLogout">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                    <polyline points="16,17 21,12 16,7"/>
+                                    <line x1="21" y1="12" x2="9" y2="12"/>
+                                </svg>
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="messages-container" id="messagesContainer">
+                    <div class="welcome-message">
+                        <div class="ai-avatar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 12l2 2 4-4"/>
+                                <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
+                                <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"/>
+                                <path d="M12 3c0 1-1 3-3 3s-3-2-3-3 1-3 3-3 3 2 3 3"/>
+                                <path d="M12 21c0-1 1-3 3-3s3 2 3 3-1 3-3 3-3-2-3-3"/>
+                            </svg>
+                        </div>
+                        <div class="welcome-content">
+                            <h2>Welcome to OCT AI Assistant</h2>
+                            <p>I'm here to help you analyze retinal OCT images and provide detailed insights. You can:</p>
+                            <ul>
+                                <li>Upload OCT images for automated analysis</li>
+                                <li>Ask questions about retinal conditions</li>
+                                <li>Get clinical recommendations and insights</li>
+                                <li>Discuss findings and treatment options</li>
+                            </ul>
+                            <p>You can chat as a guest, but <strong>login or register</strong> to save your conversations and upload OCT images!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-container">
+                    <div class="input-wrapper">
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                            <button class="attach-btn" id="attachBtn" title="Upload OCT Image">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66L9.64 16.2a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <textarea 
+                            id="messageInput" 
+                            placeholder="Ask about OCT analysis, upload an image, or describe symptoms..."
+                            rows="1"
+                        ></textarea>
+                        
+                        <button class="send-btn" id="sendBtn" disabled>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                <polygon points="22,2 15,22 11,13 2,9 22,2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Preview Modal -->
+    <div class="image-modal" id="imageModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>OCT Image Preview</h3>
+                <button class="close-modal" id="closeModal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img id="previewImage" alt="OCT Preview">
+                <div class="image-details" id="imageDetails"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn" id="cancelUpload">Cancel</button>
+                <button class="analyze-btn" id="analyzeImage">Analyze Image</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="src/script.js"></script>
+</body>
+</html>
