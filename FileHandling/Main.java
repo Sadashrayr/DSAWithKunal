@@ -1,44 +1,31 @@
 package FileHandling;
 
+import java.io.*;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.util.Scanner;
 
-public class Main {
+class Main {
     public static void main(String[] args) {
-        // try (InputStreamReader isr = new InputStreamReader(System.in)) {
-        // System.out.print("Enter some letters:");
-        // int letters = isr.read();
-        // while (isr.ready()) {
-        // System.out.print(" " + (char) letters);
-        // letters = isr.read();
-        // }
-        // // isr.close();
-        // System.out.println();
-        // } catch (IOException e) {
-        // System.out.println(e.getMessage());
-        // }
-        // try (FileReader fr = new FileReader("note.txt")) {
 
-        // int letters = fr.read();
-        // while (fr.ready()) {
-        // System.out.print((char) letters);
-        // letters = fr.read();
-        // }
-        // // isr.close();
-        // System.out.println();
-        // } catch (IOException e) {
-        // System.out.println(e.getMessage());
-        // }
-
-        // byte to char stream and then reading char stream
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
-            System.out.println("You typed:" + br.readLine());
+        // create
+        try {
+            File fo = new File("new-file.txt");
+            fo.createNewFile();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-        try (BufferedReader br = new BufferedReader(new FileReader("note.txt"))) {
+
+        // write in the file
+        try {
+            FileWriter fw = new FileWriter("new-file.txt");
+            fw.write("सर्वधर्मान्परित्यज्य मामेकं शरणं व्रज, अहं त्वां सर्वपापेभ्यो मोक्षयिष्यामि मा शुच:");
+            fw.close();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
+        // reading from a file
+        try (BufferedReader br = new BufferedReader(new FileReader("new-file.txt"))) {
             while (br.ready()) {
                 System.out.println(br.readLine());
             }
@@ -46,6 +33,16 @@ public class Main {
             System.out.println(e.getMessage());
         }
 
-    }
+        // create
+        try {
+            File fo = new File("random.txt");
+            fo.createNewFile();
+            if (fo.delete()) {
+                System.out.println(fo.getName());
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
 
+    }
 }
