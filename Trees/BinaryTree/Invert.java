@@ -1,6 +1,6 @@
 package Trees.BinaryTree;
 
-public class diameter {
+public class Invert {
     public class TreeNode {
         int val;
         TreeNode left;
@@ -19,21 +19,18 @@ public class diameter {
             this.right = right;
         }
     }
+    // my take
+    // Post order traversal will be used as at the end we will swap the roots
 
-    int diameter = 0;
-
-    public int diameterofBinaryTree(TreeNode root) {
-        height(root);
-        return diameter;
-    }
-
-    int height(TreeNode node) {
-        if (node == null) {
-            return 0;
+    public TreeNode invertTree(TreeNode root) {
+        if (root == null) {
+            return null;
         }
-        int leftheight = height(node.left);
-        int rightheight = height(node.right);
-
-        return Math.max(leftheight, rightheight) + 1;
+        TreeNode left = invertTree(root.left);
+        TreeNode right = invertTree(root.right);
+        root.left = right;
+        root.right = left;
+        return root;
     }
+
 }

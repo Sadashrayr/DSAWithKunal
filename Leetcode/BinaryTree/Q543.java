@@ -1,6 +1,8 @@
-package Trees.BinaryTree;
+package Leetcode.BinaryTree;
 
-public class diameter {
+public class Q543 {
+
+    // Definition for a binary tree node.
     public class TreeNode {
         int val;
         TreeNode left;
@@ -22,9 +24,9 @@ public class diameter {
 
     int diameter = 0;
 
-    public int diameterofBinaryTree(TreeNode root) {
+    public int diameterOfBinaryTree(TreeNode root) {
         height(root);
-        return diameter;
+        return diameter - 1;
     }
 
     int height(TreeNode node) {
@@ -33,6 +35,8 @@ public class diameter {
         }
         int leftheight = height(node.left);
         int rightheight = height(node.right);
+        int dia = leftheight + rightheight + 1;
+        diameter = Math.max(diameter, dia);
 
         return Math.max(leftheight, rightheight) + 1;
     }

@@ -1,6 +1,6 @@
-package Trees.BinaryTree;
+package Leetcode.BinaryTree;
 
-public class diameter {
+public class Q104 {
     public class TreeNode {
         int val;
         TreeNode left;
@@ -20,20 +20,15 @@ public class diameter {
         }
     }
 
-    int diameter = 0;
-
-    public int diameterofBinaryTree(TreeNode root) {
-        height(root);
-        return diameter;
-    }
-
-    int height(TreeNode node) {
-        if (node == null) {
+    public int maxDepth(TreeNode root) {
+        if (root == null) {
             return 0;
         }
-        int leftheight = height(node.left);
-        int rightheight = height(node.right);
+        int left = maxDepth(root.left);
+        int right = maxDepth(root.right);
+        int depth = Math.max(left, right) + 1;
+        return depth;
 
-        return Math.max(leftheight, rightheight) + 1;
     }
+
 }
