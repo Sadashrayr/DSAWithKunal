@@ -18,10 +18,12 @@ public class Main {
         // set.add(56);
         // set.add(6);
         // System.out.println(set);
-        MapUsingHash map = new MapUsingHash();
-        map.put("Mango", "King of fruits");
-        map.put("Apple", "A sweet red fruit");
-        map.put("Litchi", "Mine favourite");
-        System.out.println(map.get("Apple"));
+        // MapUsingHash map = new MapUsingHash();
+        // map.put("Mango", "King of fruits");
+        // map.put("Apple", "A sweet red fruit");
+        // map.put("Litchi", "Mine favourite");
+        // System.out.println(map.get("Apple"));
+        KarpRabin algo = new KarpRabin();
+        algo.search("iamironman", "iron");
     }
 }
