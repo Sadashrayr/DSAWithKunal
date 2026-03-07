@@ -15,6 +15,10 @@ public class heap<T extends Comparable<T>> {
         list.set(second, temp);
     }
 
+    public int size() {
+        return list.size();
+    }
+
     private int parent(int index) {
         return (index - 1) / 2;
     }
